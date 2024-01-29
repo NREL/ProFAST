@@ -1,0 +1,4 @@
+include ProFAST/pyc_files/*
+include ProFAST/resources/*
+include ProFAST/examples/*
+include ProFAST/tests/*

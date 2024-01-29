@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = 'ProFAST'
+description='Production Financial Analysis Scenario Tool'
+authors = [
+    {name="Jamie Kee",email="Jamie.Kee@nrel.gov"},
+    {name="Michael Penev",email="Michael.Penev@nrel.gov"},
+]
+version = '1.0'
+readme = "README.md"
+requires-python  = ">=3.8"
+license = {file='LICENSE'}
+dependencies = [
+    'importlib_resources',
+    'matplotlib',
+    'numpy',
+    'numpy_financial',
+    'pandas',
+    'plotly',
+    'pytest',
+    'xlwings',
+]
