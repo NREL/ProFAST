@@ -3,6 +3,8 @@ The Production Financial Analysis Scenario Tool (ProFAST) is the python version 
 
 Please see https://www.nrel.gov/hydrogen/h2fast.html for the H2FAST excel model
 
+<img src="https://www.nrel.gov/hydrogen/assets/images/h2fast-icon.png" alt="H2FAST Logo" style="width:200px;"/>
+
 # NOTICE
 [NOTICE.txt](NOTICE.txt)
 
