@@ -5,7 +5,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.package-data]
-myModule = ["*.json","*.csv"]
+ProFAST = ["ProFAST/resources/*.json","ProFAST/resources/*.csv"]
 
 [project]
 name = 'ProFAST'
