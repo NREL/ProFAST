@@ -1,11 +1,6 @@
 [build-system]
-requires = [
-    "setuptools>=60",
-    "setuptools-scm>=8.0"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools.package-data]
-ProFAST = ["ProFAST/resources/*.json","ProFAST/resources/*.csv"]
 
 [project]
 name = 'ProFAST'
@@ -14,7 +9,7 @@ authors = [
     {name="Jamie Kee",email="Jamie.Kee@nrel.gov"},
     {name="Michael Penev",email="Michael.Penev@nrel.gov"},
 ]
-version = '1.0'
+version = '1.0.1'
 readme = "README.md"
 requires-python  = ">=3.8"
 license = {file='LICENSE'}
@@ -25,6 +20,7 @@ dependencies = [
     'numpy_financial',
     'pandas',
     'plotly',
+    'pyarrow',
     'pytest',
     'xlwings',
 ]
