@@ -1,2 +1,2 @@
-ProFAST/pyc_files/*
-ProFAST/resources/*
+include ProFAST/pyc_files/*
+include ProFAST/resources/*
