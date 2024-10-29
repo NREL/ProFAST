@@ -1,4 +1,4 @@
-name: Upload to Test PyPi
+name: Upload to PyPi
 
 on: release
 
@@ -37,7 +37,7 @@ jobs:
 
     environment:
       name: pypi
-      url: https://test.pypi.org/p/ProFAST
+      url: https://pypi.org/p//ProFAST
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
