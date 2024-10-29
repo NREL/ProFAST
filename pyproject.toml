@@ -9,7 +9,7 @@ authors = [
     {name="Jamie Kee",email="Jamie.Kee@nrel.gov"},
     {name="Michael Penev",email="Michael.Penev@nrel.gov"},
 ]
-version = '1.0.3'
+version = '1.0.4'
 readme = "README.md"
 requires-python  = ">=3.8"
 license = {file='LICENSE'}
