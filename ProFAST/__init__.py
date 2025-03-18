@@ -14,3 +14,7 @@ elif version_info.minor == 10:
     from .pyc_files.ProFAST_310 import ProFAST
 elif version_info.minor == 11:
     from .pyc_files.ProFAST_311 import ProFAST
+elif version_info.minor == 12:
+    from .pyc_files.ProFAST_312 import ProFAST
+elif version_info.minor == 13:
+    from .pyc_files.ProFAST_313 import ProFAST
