@@ -232,10 +232,13 @@ class TestLabor(TestSettingVariables):
 class TestAnalysisStartYear(TestSettingVariables):
     def test_str(self):
         with pytest.raises(ValueError):
-            self.pf.set_params('analysis start year','5000')
+            self.pf.set_params('analysis start year', '5000')
+    def test_float(self):
+        with pytest.raises(ValueError):
+            self.pf.set_params('analysis start year', float(2030.0))
     def test_value(self):
         with pytest.raises(ValueError):
-            self.pf.set_params('analysis start year',-1)
+            self.pf.set_params('analysis start year', -1)
 
 class TestOperatingLife(TestSettingVariables):
     def test_str(self):
