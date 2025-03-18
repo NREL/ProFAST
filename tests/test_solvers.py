@@ -1,6 +1,6 @@
-import ProFAST
-
 import pytest
+
+import ProFAST
 
 """
 Test that ProFAST solvers function as expected
@@ -18,3 +18,6 @@ class TestInitial(TestPriceSolver):
     
     def test_irr_zero(self):
         assert self.sol['irr'][1] == pytest.approx(self.pf.vals["leverage after tax nominal discount rate"] , abs=self.abs_tol)
+
+    def test_wacc(self):
+        assert self.sol['wacc'] == pytest.approx(0.08321119593800433)
