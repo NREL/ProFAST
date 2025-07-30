@@ -117,7 +117,6 @@ def make_pf_config_from_profast(pf):
         "feedstocks": pf.feedstocks,
         "incentives": pf.incentives,
         "coproducts": pf.coproducts,
-        "LCO": pf.LCO,
     }
     return pf_config
 
