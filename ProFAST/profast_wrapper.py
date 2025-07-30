@@ -3,13 +3,22 @@ import json
 import os
 import numpy as np
 from ProFAST import Pro_FAST
-from ProFAST.tools.utilities import write_yaml, load_yaml
+from ProFAST.tools.utilities import write_yaml, load_yaml, rename_dict_keys
 from ProFAST.tools import convert_pf_to_dict, populate_profast, make_price_breakdown, run_profast
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 class ProFastW(Pro_FAST):
 
     def __init__(self,case=None):
-        super().__init__(case)
+        if case is not None:
+            if ".yaml" in case:
+                super().__init__(None)
+                self.load_yaml(case)
+            else:
+                super().__init__(case)
+        else: 
+            super().__init__(case)
         self.one_time_capital_incentives = {}
         self.years_of_operation = []
     
@@ -105,6 +114,8 @@ class ProFastW(Pro_FAST):
         self.vals['one time cap inct'].update({'value':sum(itc_vals)})
 
     def load_json(self,case=""):
+        if ".json" in case:
+            case = case.replace(".json","")
         self.clear_values("all")
         if os.path.isfile(case):
             f = open(case)
@@ -122,16 +133,18 @@ class ProFastW(Pro_FAST):
             "coproduct": "coproducts",
             "incentive":"incentives"
             }
-        # pf_config = {json_key_mapper[k]:v for k,v in data.items()}
+        
         pf_config = {}
         for entry_type, entry_items in data.items():
             if isinstance(entry_items,list):
                 entries = {}
                 for eitem in entry_items:
                     name = eitem.pop("name")
+                    eitem = rename_dict_keys(eitem,"depr period","depr_period")
+                    eitem = rename_dict_keys(eitem,"depr type","depr_type")
                     entries[name] = eitem
                 pf_config[json_key_mapper[entry_type]] = entries
-            else:
+            elif isinstance(entry_items,dict):
                 pf_config[json_key_mapper[entry_type]] = entry_items
 
         populate_profast(pf_config,self)
@@ -158,48 +171,90 @@ class ProFastW(Pro_FAST):
         else:
             self.years_of_operation=[int(operation_start_year)]
 
-    # @property
-    # def vals(self):
-    #     return self.vals
-    
-    # @vals.setter
-    # def vals(self, name:str, value):
-    #     self.set_params(name,value)
+    def plot_price_breakdown(self,fileout="", show_plot=True):
+        price_breakdown = self.make_price_breakdown()
+        lco_str = "LCO{}".format(self.vals["commodity"]["name"][0])
+        lco_units = "$/{}".format(self.vals["commodity"]["unit"])
+        lco_total = price_breakdown.pop(f"{lco_str}: Total ({lco_units})")
         
-    #     if name in ["analysis start year","installation months","operating life"]:
-    #         self.calculate_years_of_operation()
+        if len(price_breakdown)<=10:
+            colors = mpl.colormaps['tab10'].colors
+        elif len(price_breakdown)>10 and len(price_breakdown)<=20:
+            colors = mpl.colormaps['tab20'].colors
+        elif len(price_breakdown)>20:
+            colors = mpl.colormaps['turbo'](np.linspace(0,1,len(price_breakdown)))
+        
+        price_items = [k for k,v in price_breakdown.items() if v>0]
+        longest_string = max([len(k) for k in price_items])
+        min_val = min([price_breakdown[k] for k in price_items])
+        fs = 10
+        min_text_width = longest_string*fs/72
+        min_text_height = min([10,int(np.ceil((lco_total/min_val)*fs/72))])
 
-    # @ProFAST.vals.setter
-    # def vals(self, name:str, value):
+        fig, ax = plt.subplots(figsize=(int(np.ceil(min_text_width)), min_text_height))
+        if not hasattr(ax, 'side_label_count'):
+            ax.side_label_count = 0
+        start_val = 0
+        bw = 5.0
+        x_val = 5.0
+        for item,bar_color in zip(price_items,colors):
+            item_label = item.replace(lco_str,"").replace(lco_units,"").strip("(): ")
+            # label_with_val = f"{lco_str} {item_label}: {price_breakdown[item]:.3f} ({lco_units})"
+            label_with_val = f"{item_label}: {price_breakdown[item]:.3f} ({lco_units})"
+            p1 = ax.bar(
+                        x_val,
+                        price_breakdown[item],
+                        width=bw,
+                        label=item_label,
+                        bottom=start_val,
+                        alpha=0.5,
+                        color=bar_color,
+                    )
+            if (price_breakdown[item]*10/lco_total)<0.25:
+                
+                bar_mid = start_val + price_breakdown[item]/2
+                
+                ax.annotate(
+                    label_with_val,
+                    xy=(7.5,bar_mid),
+                    xytext=(7.5,bar_mid+0.1*ax.side_label_count),
+                    xycoords='data',
+                    arrowprops=dict(arrowstyle="->", lw=1, alpha=0.3),
+                    va='center',
+                    ha='left',
+                    color=bar_color
+                    )
+                
+                ax.side_label_count += 1
+            else:
+                ax.bar_label(
+                    p1,
+                    labels=[label_with_val],
+                    label_type="center",
+                    fontsize = fs,
+                )
+                ax.side_label_count = 0
 
-    # @property
-    # def params(self):
-    #     return self.vals
-
-    # @params.setter
-    # def params(self, name:str, value):
-    #     if name == "one time cap inct":
-    #         if isinstance(value,dict):
-    #             itc_tot = self.vals['one time cap inct']['value'] + value['value']
-    #             itc_dict = {k:v for k,v in value.items() if k!='value'}
-    #             itc_dict['value'] = itc_tot
-    #             self.set_params('one time cap inct',itc_dict)
-    #             return 
-    #         if isinstance(value,(int,float,np.floating)):
-    #             itc_tot = self.vals['one time cap inct']['value'] + value['value']
-    #             itc_dict = {k:v for k,v in self.vals['one time cap inct'].items() if k!='value'}
-    #             itc_dict['value'] = itc_tot
-    #             self.set_params('one time cap inct',itc_dict)
-    #             return
-    #         raise ValueError(f"{name} must either be numeric value or dictionary.")
-
-    #     else:
-    #         self.set_params(name,value)
+            start_val += price_breakdown[item]
+        ax.set_ylabel(f"Levelized cost of {self.vals['commodity']['name']} ({lco_str} in {lco_units})",fontsize=fs)
+        ax.set_xticks(ticks=[x_val], labels=[''])
+        txt = ax.annotate(
+                f"{lco_str} {lco_total:.3f} {lco_units}",
+                xy=(x_val, lco_total),
+                xycoords='data',
+                horizontalalignment="center",
+                verticalalignment="bottom",
+                fontweight="bold",
+                fontsize = fs,
+            )
+        ax.spines[['right', 'top']].set_visible(False)
+        if fileout != "":
+            fig.savefig(fileout,bbox_inches='tight')
+        if show_plot:
+            plt.show()
+        else:
+            plt.close()
 
 
-# if __name__ == "__main__":
-#     pfw = ProFastW()
-#     pfw.set_params("commodity",{"name": "temp","unit":"kg","initial price": 100, "escalation": 0.0})
-#     pfw.add_capital_incentive("test1",100)
-#     pfw.add_capital_incentive("test2",200)
-#     []
+        []
+   
