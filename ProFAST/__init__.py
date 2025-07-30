@@ -7,14 +7,16 @@ if version_info.major not in major_versions and version_info.minor not in minor_
     raise (ImportError(f"ProFAST is not currenly available for your Python version ({version_info[0]}.{version_info[1]}.{version_info[2]}). ProFAST is only compatible with Python 3.8, 3.9, 3.10, 3.11"))
 
 if version_info.minor == 8:
-    from .pyc_files.ProFAST_308 import ProFAST
+    from .pyc_files.ProFAST_308 import ProFAST as Pro_FAST
 elif version_info.minor == 9:
-    from .pyc_files.ProFAST_309 import ProFAST
+    from .pyc_files.ProFAST_309 import ProFAST as Pro_FAST
 elif version_info.minor == 10:
-    from .pyc_files.ProFAST_310 import ProFAST
+    from .pyc_files.ProFAST_310 import ProFAST as Pro_FAST
 elif version_info.minor == 11:
-    from .pyc_files.ProFAST_311 import ProFAST
+    from .pyc_files.ProFAST_311 import ProFAST as Pro_FAST
 elif version_info.minor == 12:
-    from .pyc_files.ProFAST_312 import ProFAST
+    from .pyc_files.ProFAST_312 import ProFAST as Pro_FAST
 elif version_info.minor == 13:
-    from .pyc_files.ProFAST_313 import ProFAST
+    from .pyc_files.ProFAST_313 import ProFAST as Pro_FAST
+
+from .profast_wrapper import ProFastW as ProFAST
