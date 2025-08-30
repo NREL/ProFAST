@@ -23,4 +23,5 @@ dependencies = [
     'pyarrow',
     'pytest',
     'xlwings',
+    'pyyaml-include',
 ]
